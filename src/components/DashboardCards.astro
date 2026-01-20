@@ -1,0 +1,96 @@
+---
+/**
+ * DashboardCards Component
+ * Displays 4 key stats in a visual grid for quick scanning
+ */
+interface Props {
+  items: {
+    icon: string;
+    value: string;
+    label: string;
+  }[];
+}
+
+const { items } = Astro.props;
+---
+
+<div class="dashboard-grid">
+  {items.map((item) => (
+    <div class="dash-card">
+      <div class="dash-icon">
+        <i class={`fas ${item.icon}`}></i>
+      </div>
+      <div class="dash-content">
+        <span class="dash-value">{item.value}</span>
+        <span class="dash-label">{item.label}</span>
+      </div>
+    </div>
+  ))}
+</div>
+
+<style>
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin: 30px 0;
+  }
+
+  .dash-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+
+  .dash-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(244, 185, 66, 0.1);
+    border-color: var(--gold);
+  }
+
+  .dash-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, var(--gold), #fcd34d);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .dash-icon i {
+    color: #1a202c;
+    font-size: 1.2rem;
+  }
+
+  .dash-content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .dash-value {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--title);
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  .dash-label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  @media (max-width: 500px) {
+    .dashboard-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

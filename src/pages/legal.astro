@@ -1,0 +1,126 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+---
+
+<Layout title="Aviso Legal y Privacidad | Instante Trips">
+    <Navbar />
+    
+    <main class="legal-container">
+        <div class="legal-header">
+            <h1>Términos Legales</h1>
+            <p class="subtitle">Transparencia y Responsabilidad</p>
+        </div>
+
+        <section class="legal-content">
+            <article>
+                <h3>1. Exención de Responsabilidad (Disclaimer)</h3>
+                <p>
+                    <strong>Instante Trips</strong> actúa exclusivamente como una plataforma informativa y de curaduría de contenido turístico. 
+                    Todos los servicios sugeridos en este sitio web (incluyendo, pero no limitado a: excursiones, tours, vuelos, alojamiento, tarjetas eSIM y seguros de viaje) 
+                    son operados por <strong>proveedores externos e independientes</strong>.
+                </p>
+                <p>
+                    <strong>Instante Trips no asume ninguna responsabilidad</strong> (directa ni indirecta) por el cumplimiento, calidad, seguridad, 
+                    reembolsos o cancelaciones de los servicios contratados con dichos terceros. Cualquier reclamo o gestión deberá realizarse directamente con la empresa proveedora del servicio.
+                </p>
+            </article>
+
+            <article>
+                <h3>2. Política de Privacidad</h3>
+                <p>
+                    Respetamos tu privacidad al máximo. Este sitio web:
+                </p>
+                <ul>
+                    <li><strong>No recopila</strong> nombres, correos electrónicos ni teléfonos.</li>
+                    <li><strong>No almacena</strong> datos de tarjetas de crédito.</li>
+                    <li><strong>No utiliza cookies</strong> de rastreo invasivo.</li>
+                </ul>
+                <p>
+                    Nuestra navegación es anónima. Los enlaces a terceros (como aerolíneas o agencias de tours) pueden tener sus propias políticas de privacidad que sugerimos leer al salir de nuestro sitio.
+                </p>
+            </article>
+
+            <article>
+                <h3>3. Uso de la Información</h3>
+                <p>
+                    La información de precios, horarios y requisitos migratorios puede cambiar sin previo aviso. Recomendamos verificar siempre la información oficial antes de viajar. El usuario reconoce que utiliza esta guía bajo su propia responsabilidad.
+                </p>
+            </article>
+
+            <div class="back-btn-container">
+                <a href="/" class="btn-back">
+                    <i class="fas fa-arrow-left"></i> Volver al Inicio
+                </a>
+            </div>
+        </section>
+    </main>
+</Layout>
+
+<style>
+    .legal-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 120px 20px 60px; /* Padding top alto para no chocar con el Navbar */
+    }
+
+    .legal-header {
+        text-align: center;
+        margin-bottom: 50px;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 30px;
+    }
+
+    .legal-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+    }
+
+    .subtitle {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+        font-weight: 300;
+    }
+
+    .legal-content article {
+        margin-bottom: 40px;
+    }
+
+    h3 {
+        font-size: 1.3rem;
+        margin-bottom: 15px;
+        color: var(--title);
+    }
+
+    p, li {
+        font-size: 1rem;
+        line-height: 1.7;
+        color: var(--text);
+        margin-bottom: 15px;
+        font-weight: 300;
+    }
+
+    ul {
+        margin-bottom: 20px;
+        padding-left: 20px;
+    }
+
+    .back-btn-container {
+        margin-top: 60px;
+        text-align: center;
+    }
+
+    .btn-back {
+        display: inline-block;
+        padding: 12px 30px;
+        background-color: var(--title);
+        color: var(--card-bg);
+        border-radius: 50px;
+        font-weight: 700;
+        transition: transform 0.2s;
+    }
+
+    .btn-back:hover {
+        transform: scale(1.05);
+    }
+</style>

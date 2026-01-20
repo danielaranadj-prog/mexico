@@ -1,0 +1,2333 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro'; 
+import Navbar from '../../components/Navbar.astro';
+import FlightSearch from '../../components/FlightSearch.astro';
+import HotelWidget from '../../components/HotelWidget.astro';
+import AdsenseWidget from '../../components/AdsenseWidget.astro';
+import FAQ from '../../components/FAQ.astro';
+import LeadMagnet from '../../components/LeadMagnet.astro';
+
+// 1. Generamos las rutas leyendo la carpeta "content/destinos"
+export async function getStaticPaths() {
+  const destinos = await getCollection('destinos');
+  
+  return destinos.map((destino) => ({
+    params: { id: destino.slug },
+    props: { destino },
+  }));
+}
+
+// 2. Extraemos los datos y renderizamos el contenido
+const { destino } = Astro.props;
+const { Content } = await destino.render();
+const { 
+  title, img, desc, historia, 
+  // V3 fields
+  checklist, barrios, experiencias, gastronomia, transporte, mapa,
+  leadMagnet, premiumGuide, faqs,
+  // Legacy fields
+  secciones, tours, dashboard, zonas, ctas,
+  actividades, atracciones, escapadas
+} = destino.data;
+
+// Colores para zonas
+const zonaColors = {
+  trendy: { bg: 'rgba(168, 85, 247, 0.1)', border: '#a855f7', text: '#a855f7' },
+  elegante: { bg: 'rgba(59, 130, 246, 0.1)', border: '#3b82f6', text: '#3b82f6' },
+  bohemio: { bg: 'rgba(249, 115, 22, 0.1)', border: '#f97316', text: '#f97316' },
+  moderno: { bg: 'rgba(16, 185, 129, 0.1)', border: '#10b981', text: '#10b981' },
+};
+
+// Colores para CTAs
+const ctaColors = {
+  emerald: { bg: 'linear-gradient(135deg, #10b981, #059669)', hover: '#047857' },
+  blue: { bg: 'linear-gradient(135deg, #3b82f6, #2563eb)', hover: '#1d4ed8' },
+  gold: { bg: 'linear-gradient(135deg, #F4B942, #d97706)', hover: '#b45309' },
+  purple: { bg: 'linear-gradient(135deg, #8b5cf6, #7c3aed)', hover: '#6d28d9' },
+};
+---
+
+<Layout title={`${title} | Destinos México`}>
+  <Navbar />
+  
+  <!-- 1. HERO RENOVADO -->
+  <header class="dest-hero" style={`background-image: url(${img})`}>
+    <div class="overlay"></div>
+    <div class="hero-text">
+      <h1>{title}</h1>
+      <p class="hero-subtitle">Tu Guía Completa para el Viaje Perfecto</p>
+      <p class="slogan">{desc}</p>
+      <a href="#lead-magnet" class="hero-cta">
+        <i class="fas fa-download"></i> Descarga tu Itinerario GRATIS
+      </a>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Sin botón volver para evitar fricción -->
+
+    <!-- 2. LEAD MAGNET (Above the Fold) -->
+    {leadMagnet && (
+      <section id="lead-magnet" class="lead-magnet-above">
+        <div class="lead-magnet-card">
+          <div class="lead-magnet-content">
+            <span class="tag-gratis">📅 GRATIS</span>
+            {leadMagnet.subtitulo && <p class="lead-subtitle">{leadMagnet.subtitulo}</p>}
+            <h2>{leadMagnet.titulo}</h2>
+            <p>{leadMagnet.descripcion}</p>
+            {leadMagnet.beneficios && (
+              <ul class="lead-benefits">
+                {leadMagnet.beneficios.map((b) => (
+                  <li><i class="fas fa-check-circle"></i> {b}</li>
+                ))}
+              </ul>
+            )}
+            <div class="lead-trust">
+              <span>🔒 Sin spam</span>
+              <span>⚡ Descarga instantánea</span>
+            </div>
+          </div>
+          <a href={leadMagnet.archivo} class="lead-cta-btn">
+            <i class="fas fa-download"></i> Descargar Ahora
+          </a>
+        </div>
+      </section>
+    )}
+
+    <!-- 3. CHECKLIST DE SUPERVIVENCIA PORTEÑA -->
+    {checklist && checklist.length > 0 && (
+      <section class="checklist-section">
+        <h2>✅ Checklist de Supervivencia Porteña</h2>
+        <p class="checklist-intro">Resuelve estos {checklist.length} puntos y viaja tranquilo.</p>
+        <div class="checklist-grid">
+          {checklist.map((item) => (
+            <div class="checklist-item">
+              <div class="checklist-emoji">{item.emoji}</div>
+              <div class="checklist-content">
+                <h3>{item.titulo}</h3>
+                <p set:html={item.detalle.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}></p>
+                {item.cta && item.ctaLink && (
+                  <a href={item.ctaLink} target="_blank" rel="noopener" class={`checklist-cta ${item.ctaRecomendado ? 'recomendado' : ''}`}>
+                    {item.ctaRecomendado && <span class="rec-badge">Recomendado</span>}
+                    {item.cta}
+                  </a>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- ========== NUEVO: ZONAS ========== -->
+    {zonas && zonas.length > 0 && (
+      <section class="zonas-section">
+        <h2>🗺️ Zonas Recomendadas</h2>
+        <div class="zonas-grid">
+          {zonas.map((zona) => {
+            const colors = zonaColors[zona.tipo] || zonaColors.trendy;
+            return (
+              <div class="zona-card" style={`background: ${colors.bg}; border-color: ${colors.border}`}>
+                <span class="zona-badge" style={`background: ${colors.border}; color: white`}>
+                  {zona.tipo}
+                </span>
+                <h3>{zona.nombre}</h3>
+                <p>{zona.descripcion}</p>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+    )}
+
+    <!-- ========== NUEVO: CTAs ========== -->
+    {ctas && ctas.length > 0 && (
+      <section class="ctas-section">
+        {ctas.map((cta) => {
+          const colors = ctaColors[cta.color] || ctaColors.gold;
+          return (
+            <a href={cta.link} target="_blank" rel="noopener" class="cta-box">
+              <div class="cta-content">
+                <h3>{cta.titulo}</h3>
+                <p>{cta.descripcion}</p>
+              </div>
+              <button class="cta-button" style={`background: ${colors.bg}`}>
+                {cta.boton} <i class="fas fa-arrow-right"></i>
+              </button>
+            </a>
+          );
+        })}
+      </section>
+    )}
+
+    <!-- ========== 6. TOP EXPERIENCIAS (V3) ========== -->
+    {experiencias && experiencias.length > 0 && (
+      <section class="experiencias-section">
+        <h2>🎯 Top {experiencias.length} Cosas que hacer en {title}</h2>
+        <div class="experiencias-list">
+          {experiencias.map((exp, index) => (
+            <div class="experiencia-item">
+              <div class="exp-number">{index + 1}</div>
+              <div class="exp-icon">{exp.icono}</div>
+              <div class="exp-content">
+                <div class="exp-header">
+                  <h3>{exp.titulo}</h3>
+                  <span class="exp-tag" style={`background: ${exp.tagColor}`}>{exp.tag}</span>
+                </div>
+                <p>{exp.descripcion}</p>
+                {exp.cta && exp.ctaLink && (
+                  <a href={exp.ctaLink} target="_blank" rel="noopener" class="exp-cta">
+                    👉 {exp.cta}
+                  </a>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div class="blog-link-box">
+          <p>🌟 ¿Quieres más consejos y experiencias?</p>
+          <a href="https://blog.instantetrips.com/mexico" target="_blank" rel="noopener" class="blog-link">
+            Visita nuestro Blog <i class="fas fa-external-link-alt"></i>
+          </a>
+        </div>
+      </section>
+    )}
+
+    <!-- ========== QUÉ VISITAR ========== -->
+    {atracciones && atracciones.length > 0 && (
+      <section class="atracciones-section">
+        <h2>🏛️ Qué Visitar</h2>
+        <div class="atracciones-grid">
+          {atracciones.map((lugar) => (
+            <div class="atraccion-card">
+              {lugar.imagen && (
+                <div class="atraccion-imagen" style={`background-image: url('${lugar.imagen}')`}>
+                  {lugar.gratis && <span class="tag-gratis">GRATIS</span>}
+                  {lugar.precio && <span class="tag-precio">{lugar.precio}</span>}
+                </div>
+              )}
+              <div class="atraccion-content">
+                <span class="atraccion-zona">{lugar.zona}</span>
+                <h3>{lugar.nombre}</h3>
+                <p>{lugar.descripcion}</p>
+                {lugar.link && (
+                  <a href={lugar.link} target="_blank" rel="noopener" class="atraccion-link">
+                    Ver más <i class="fas fa-arrow-right"></i>
+                  </a>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- ========== 4. BARRIOS (V3) ========== -->
+    {barrios && barrios.length > 0 && (
+      <section class="barrios-section">
+        <h2>🏘️ ¿Dónde alojarse y pasear? Entendiendo la ciudad</h2>
+        <div class="barrios-grid">
+          {barrios.map((barrio) => (
+            <div class="barrio-card">
+              {barrio.imagen && (
+                <div class="barrio-imagen" style={`background-image: url('${barrio.imagen}')`}>
+                  <span class="barrio-vibra" style={barrio.colorTag ? `background: ${barrio.colorTag}` : ''}>
+                    {barrio.vibra}
+                  </span>
+                </div>
+              )}
+              <div class="barrio-content">
+                <h3>{barrio.nombre}</h3>
+                <p class="barrio-ideal">
+                  <strong>Ideal para:</strong> {barrio.idealPara}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- ========== CÓMO LLEGAR ========== -->
+    {transporte && transporte.aeropuerto && (
+      <section class="transporte-section">
+        <h2>✈️ Cómo Llegar del Aeropuerto</h2>
+        <div class="aeropuerto-info">
+          <div class="aeropuerto-header">
+            <h3>{transporte.aeropuerto.nombre}</h3>
+            <span class="distancia-badge">{transporte.aeropuerto.distancia}</span>
+          </div>
+          <div class="opciones-transporte">
+            {transporte.aeropuerto.opciones.map((op) => (
+              <div class="opcion-card">
+                <div class="opcion-metodo">{op.metodo}</div>
+                <div class="opcion-details">
+                  <span class="opcion-tiempo"><i class="far fa-clock"></i> {op.tiempo}</span>
+                  <span class="opcion-precio"><i class="fas fa-tag"></i> {op.precio}</span>
+                </div>
+                {op.link && (
+                  <a href={op.link} target="_blank" rel="noopener" class="opcion-btn">
+                    Reservar <i class="fas fa-arrow-right"></i>
+                  </a>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- ========== ESCAPADAS ========== -->
+    {escapadas && escapadas.length > 0 && (
+      <section class="escapadas-section">
+        <h2>🚌 Escapadas desde {title}</h2>
+        <div class="escapadas-grid">
+          {escapadas.map((escapada) => (
+            <a href={escapada.link || '#'} target={escapada.link ? '_blank' : '_self'} rel="noopener" class="escapada-card">
+              {escapada.imagen && (
+                <div class="escapada-imagen" style={`background-image: url('${escapada.imagen}')`}>
+                  <div class="escapada-tags">
+                    <span class="escapada-distancia">{escapada.distancia}</span>
+                    <span class="escapada-tiempo">{escapada.tiempo}</span>
+                  </div>
+                </div>
+              )}
+              <div class="escapada-content">
+                <h3>{escapada.nombre}</h3>
+                <p>{escapada.descripcion}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- ========== GASTRONOMÍA ========== -->
+    {gastronomia && gastronomia.length > 0 && (
+      <section class="gastronomia-section">
+        <h2>🍽️ Dónde Comer</h2>
+        <div class="gastronomia-grid">
+          {gastronomia.map((cat) => (
+            <div class="gastronomia-categoria">
+              <h3>{cat.categoria}</h3>
+              <div class="lugares-lista">
+                {cat.lugares.map((lugar) => (
+                  <div class="lugar-item">
+                    <span class="lugar-nombre">{lugar.nombre}</span>
+                    <span class="lugar-zona">{lugar.zona}</span>
+                    <span class="lugar-precio">{lugar.precio}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- ========== MAPA ========== -->
+    {mapa && (
+      <section class="mapa-section">
+        <h2>🗺️ Mapa de {title}</h2>
+        <div class="mapa-container">
+          <iframe 
+            src={`https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(mapa.centro.split(',')[1]) - 0.1}%2C${parseFloat(mapa.centro.split(',')[0]) - 0.05}%2C${parseFloat(mapa.centro.split(',')[1]) + 0.1}%2C${parseFloat(mapa.centro.split(',')[0]) + 0.05}&layer=mapnik`}
+            style="border: 0; width: 100%; height: 400px; border-radius: 16px;"
+            loading="lazy"
+          ></iframe>
+          <a href={`https://www.google.com/maps?ll=${mapa.centro}&z=${mapa.zoom}`} target="_blank" rel="noopener" class="mapa-link">
+            <i class="fas fa-external-link-alt"></i> Abrir en Google Maps
+          </a>
+        </div>
+      </section>
+    )}
+
+    <AdsenseWidget slot="inline" />
+
+    {leadMagnet && (
+      <LeadMagnet leadMagnet={leadMagnet} destinoTitle={title} />
+    )}
+
+    {faqs && faqs.length > 0 && (
+      <FAQ faqs={faqs} destinoTitle={title} />
+    )}
+
+    <!-- 11. MAPA (ya está arriba) -->
+
+    <!-- 12. CIERRE PREMIUM (Final Upsell) -->
+    {premiumGuide && (
+      <section class="premium-close-section">
+        <div class="premium-close-card">
+          <div class="premium-badge">⭐ PREMIUM</div>
+          <h2>{premiumGuide.titulo}</h2>
+          <p class="premium-subtitle">{premiumGuide.subtitulo}</p>
+          <div class="premium-benefits">
+            {premiumGuide.beneficios.map((b) => (
+              <div class="benefit-item"><i class="fas fa-check-circle"></i> {b}</div>
+            ))}
+          </div>
+          <div class="premium-price">
+            <span class="price-original">~~{premiumGuide.precioOriginal} {premiumGuide.moneda}~~</span>
+            <span class="price-tag">${premiumGuide.precioOferta} {premiumGuide.moneda}</span>
+            <span class="price-note">Acceso de por vida • Actualizaciones gratis</span>
+          </div>
+          <a href={premiumGuide.link} class="premium-final-btn">
+            <i class="fas fa-unlock"></i> OBTENER GUÍA PREMIUM AHORA
+          </a>
+        </div>
+      </section>
+    )}
+
+    <!-- Vuelos y Hoteles -->
+    <section class="travel-widgets-section">
+      <div class="section-header">
+        <h2>✈️ Reservá tu Viaje</h2>
+        <span class="badge">Reservar</span>
+      </div>
+      <div class="travel-widgets">
+        <FlightSearch defaultDestination={title} />
+        <HotelWidget defaultDestination={title} />
+      </div>
+      <AdsenseWidget slot="inline" className="mt-ads" />
+    </section>
+  </main>
+</Layout>
+
+<style>
+  /* --- HERO & GENERAL --- */
+  .dest-hero {
+    height: 45vh;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    padding-top: 60px;
+  }
+  .overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.45); }
+  .hero-text { position: relative; z-index: 2; padding: 0 20px; }
+  
+  .hero-text h1 { 
+      font-size: clamp(2.5rem, 6vw, 4rem); 
+      font-style: normal;
+      margin: 15px 0; 
+      font-weight: 700;
+      letter-spacing: -1px; 
+      text-transform: uppercase;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+      color: #ffffff !important;
+  }
+
+  .slogan { 
+      font-size: 0.9rem;
+      font-weight: 300;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      opacity: 0.9;
+      margin-top: 10px;
+      color: #ffffff !important;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  }
+  
+  .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+  .nav-back { margin-bottom: 40px; }
+  .back-link { font-size: 0.75rem; color: var(--gold); letter-spacing: 2px; font-weight: 700; display: flex; align-items: center; gap: 8px; text-decoration: none; }
+
+  /* ========== DASHBOARD ========== */
+  .dashboard-section {
+    margin-bottom: 50px;
+  }
+  
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+  }
+  
+  .dashboard-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 15px;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+  
+  .dashboard-card:hover {
+    border-color: var(--gold);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(244, 185, 66, 0.1);
+  }
+  
+  .dashboard-icon {
+    width: 45px;
+    height: 45px;
+    margin: 0 auto 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(244, 185, 66, 0.15), rgba(117, 170, 219, 0.15));
+    border-radius: 12px;
+  }
+  
+  .dashboard-icon i {
+    font-size: 1.2rem;
+    color: var(--gold);
+  }
+  
+  .dashboard-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .dashboard-value {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--title);
+  }
+  
+  .dashboard-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-secondary);
+  }
+  
+  @media (max-width: 768px) {
+    .dashboard-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  @media (max-width: 400px) {
+    .dashboard-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ========== ZONAS ========== */
+  .zonas-section {
+    margin: 50px 0;
+    padding-top: 40px;
+    border-top: 1px solid var(--border);
+  }
+  
+  .zonas-section h2 {
+    font-size: 1.5rem;
+    margin-bottom: 25px;
+    color: var(--title);
+  }
+  
+  .zonas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+  }
+  
+  .zona-card {
+    padding: 20px;
+    border-radius: 16px;
+    border: 2px solid;
+    position: relative;
+  }
+  
+  .zona-badge {
+    position: absolute;
+    top: -10px;
+    right: 15px;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: 700;
+  }
+  
+  .zona-card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+    color: var(--title);
+  }
+  
+  .zona-card p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* ========== CTAs ========== */
+  .ctas-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin: 40px 0;
+  }
+  
+  .cta-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+  
+  .cta-box:hover {
+    border-color: var(--gold);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+  }
+  
+  .cta-content h3 {
+    font-size: 1.1rem;
+    margin-bottom: 6px;
+    color: var(--title);
+  }
+  
+  .cta-content p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+  
+  .cta-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 30px;
+    color: white;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: transform 0.2s, opacity 0.2s;
+  }
+  
+  .cta-button:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+  
+  @media (max-width: 600px) {
+    .cta-box {
+      flex-direction: column;
+      gap: 15px;
+      text-align: center;
+    }
+    
+    .cta-button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  /* --- RESTO DE ESTILOS ORIGINALES --- */
+  .text-block { margin-bottom: 50px; }
+  .text-block h2 { 
+      font-size: 2rem; 
+      margin-bottom: 15px; 
+      font-weight: 600;
+      font-style: normal;
+      letter-spacing: -0.5px; 
+      color: var(--title);
+  }
+  
+  .text-block p { 
+      font-weight: 400; 
+      color: var(--text-secondary); 
+      line-height: 1.8; 
+      font-size: 1rem;
+      text-align: justify;
+      text-wrap: pretty;
+  }
+
+  .icon-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 35px;
+    margin-top: 40px;
+    margin-bottom: 60px;
+  }
+  .icon-item { display: flex; gap: 18px; align-items: flex-start; }
+  .icon-wrapper {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    flex-shrink: 0;
+    background: var(--bg-secondary); 
+  }
+  .icon-wrapper i { color: var(--gold); font-size: 1.1rem; }
+  
+  .icon-content h3 { 
+      font-size: 0.85rem; 
+      letter-spacing: 1px; 
+      text-transform: uppercase; 
+      margin-bottom: 6px; 
+      font-weight: 700;
+      color: var(--title);
+  }
+  
+  .icon-content p { 
+      font-size: 0.9rem; 
+      font-weight: 400; 
+      color: var(--text-secondary); 
+      margin: 0; 
+      line-height: 1.6;
+      text-align: justify;
+      hyphens: auto;
+  }
+
+  @media (max-width: 600px) {
+    .icon-grid { grid-template-columns: 1fr; gap: 25px; }
+    .hero-text h1 { font-size: 2.8rem; }
+  }
+
+  /* --- TOURS SECTION --- */
+  .tours-section { border-top: 1px solid var(--border); padding-top: 40px; }
+  .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding: 0 5px; }
+  .section-header h2 { font-size: 1.5rem; color: var(--title); font-weight: 700; margin: 0; font-family: 'Montserrat', sans-serif; }
+  .badge { background: var(--gold); color: #fff; font-size: 0.7rem; padding: 5px 10px; border-radius: 20px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+
+  .scroll-container {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding-bottom: 25px;
+    padding-left: 5px; 
+    padding-right: 20px;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+  .scroll-container::-webkit-scrollbar { display: none; }
+
+  .tour-card {
+    flex: 0 0 260px;
+    height: 320px;
+    background: var(--card-bg);
+    border-radius: 18px;
+    overflow: hidden;
+    scroll-snap-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    transition: transform 0.2s ease;
+  }
+  .tour-card:active { transform: scale(0.98); }
+
+  .card-image { height: 55%; background-size: cover; background-position: center; position: relative; }
+  .duration-tag { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); color: white; padding: 4px 10px; border-radius: 8px; font-size: 0.7rem; font-weight: 600; }
+
+  .card-info { padding: 16px; display: flex; flex-direction: column; justify-content: space-between; height: 45%; }
+  .card-info h3 { font-size: 1.05rem; margin: 0 0 5px 0; color: var(--title); font-weight: 700; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+  .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
+  .price { font-size: 1.1rem; font-weight: 800; color: var(--text-secondary); }
+  
+  .btn-reservar { background: var(--text); color: var(--bg); padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; display: flex; align-items: center; gap: 4px; transition: opacity 0.2s; }
+  .btn-reservar:hover { opacity: 0.8; }
+
+  .disclaimer-text { font-size: 0.7rem; color: var(--text-secondary); text-align: center; margin-top: 25px; opacity: 0.6; letter-spacing: 0.5px; }
+
+  @media (min-width: 768px) {
+    .tour-card { flex: 0 0 280px; }
+  }
+
+  /* --- DESTINATION CONTENT (ENHANCED) --- */
+  .destination-content {
+    max-width: 800px;
+    margin: 40px auto 80px auto;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--text);
+    background: var(--card-bg);
+    border-radius: 24px;
+    padding: 40px;
+    border: 1px solid var(--border);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+  }
+
+  /* Títulos principales con icono decorativo */
+  .destination-content :global(h3:first-of-type) {
+    font-size: 1.6rem;
+    color: var(--title);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid;
+    border-image: linear-gradient(90deg, var(--gold), var(--celeste)) 1;
+    margin-top: 0;
+  }
+
+  .destination-content :global(h3) {
+    color: var(--title);
+    font-family: 'Montserrat', sans-serif;
+    margin-top: 35px;
+    margin-bottom: 15px;
+    font-weight: 700;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* Subtítulos (h4) como secciones */
+  .destination-content :global(h4) {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--gold);
+    margin-top: 30px;
+    margin-bottom: 15px;
+    padding: 12px 18px;
+    background: linear-gradient(135deg, rgba(244, 185, 66, 0.1), rgba(117, 170, 219, 0.05));
+    border-left: 4px solid var(--gold);
+    border-radius: 0 12px 12px 0;
+  }
+
+  /* Párrafos */
+  .destination-content :global(p) {
+    margin-bottom: 18px;
+    text-align: justify;
+    color: var(--text-secondary);
+  }
+
+  /* Listas estilizadas como cards */
+  .destination-content :global(ul) {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .destination-content :global(li) {
+    background: var(--bg);
+    padding: 16px 20px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    position: relative;
+    padding-left: 45px;
+    transition: all 0.3s ease;
+  }
+
+  .destination-content :global(li):hover {
+    border-color: var(--gold);
+    transform: translateX(5px);
+  }
+
+  .destination-content :global(li)::before {
+    content: '✓';
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 22px;
+    height: 22px;
+    background: linear-gradient(135deg, var(--gold), #d97706);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    color: white;
+    font-weight: bold;
+  }
+
+  /* Listas ordenadas */
+  .destination-content :global(ol) {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+    counter-reset: item;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .destination-content :global(ol li) {
+    counter-increment: item;
+    background: linear-gradient(135deg, var(--card-bg), var(--bg));
+    padding: 20px 25px;
+    padding-left: 65px;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    position: relative;
+  }
+
+  .destination-content :global(ol li)::before {
+    content: counter(item);
+    position: absolute;
+    left: 18px;
+    top: 18px;
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, var(--gold), var(--celeste));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.9rem;
+    color: white;
+    font-weight: 800;
+  }
+
+  /* Strong/Bold destacado */
+  .destination-content :global(strong) {
+    color: var(--title);
+    font-weight: 700;
+    background: linear-gradient(180deg, transparent 60%, rgba(244, 185, 66, 0.2) 60%);
+    padding: 0 2px;
+  }
+
+  /* Blockquotes como tip boxes */
+  .destination-content :global(blockquote) {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(16, 185, 129, 0.02));
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-left: 4px solid #10b981;
+    border-radius: 0 16px 16px 0;
+    padding: 20px 25px;
+    margin: 25px 0;
+    position: relative;
+  }
+
+  .destination-content :global(blockquote)::before {
+    content: '💡';
+    position: absolute;
+    top: -12px;
+    left: 15px;
+    background: var(--card-bg);
+    padding: 0 8px;
+    font-size: 1.2rem;
+  }
+
+  .destination-content :global(blockquote p) {
+    margin: 0;
+    font-style: normal;
+    color: var(--text);
+  }
+
+  /* Links estilizados */
+  .destination-content :global(a) {
+    color: var(--gold);
+    text-decoration: none;
+    font-weight: 600;
+    border-bottom: 1px dashed var(--gold);
+    transition: all 0.2s;
+  }
+
+  .destination-content :global(a):hover {
+    color: var(--celeste);
+    border-color: var(--celeste);
+  }
+
+  /* Code inline */
+  .destination-content :global(code) {
+    background: var(--bg);
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 0.9em;
+    color: var(--gold);
+    font-family: 'Fira Code', monospace;
+  }
+
+  @media (max-width: 600px) {
+    .destination-content {
+      padding: 25px 20px;
+      border-radius: 16px;
+      margin: 20px 0 40px 0;
+    }
+    
+    .destination-content :global(li) {
+      padding: 14px 15px 14px 40px;
+    }
+    
+    .destination-content :global(ol li) {
+      padding-left: 55px;
+    }
+  }
+
+  /* --- TRAVEL WIDGETS SECTION --- */
+  .travel-widgets-section {
+    border-top: 1px solid var(--border);
+    padding-top: 40px;
+    margin-top: 40px;
+  }
+
+  .travel-widgets {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  @media (max-width: 600px) {
+    .travel-widgets {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .mt-ads {
+    margin-top: 2rem;
+  }
+
+  /* ========== ITINERARIO CTAs ========== */
+  .itinerario-cta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 25px;
+    padding: 30px;
+    border-radius: 20px;
+    margin-top: 25px;
+    transition: all 0.3s ease;
+  }
+
+  .itinerario-cta:hover {
+    transform: translateY(-3px);
+  }
+
+  .free-cta {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(16, 185, 129, 0.03));
+    border: 1px solid rgba(16, 185, 129, 0.2);
+  }
+
+  .free-cta:hover {
+    border-color: #10b981;
+    box-shadow: 0 15px 40px rgba(16, 185, 129, 0.15);
+  }
+
+  .premium-cta {
+    background: linear-gradient(135deg, rgba(244, 185, 66, 0.1), rgba(168, 85, 247, 0.05));
+    border: 2px solid var(--gold);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .premium-cta::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, transparent 50%, rgba(244, 185, 66, 0.15) 50%);
+  }
+
+  .premium-cta:hover {
+    box-shadow: 0 15px 40px rgba(244, 185, 66, 0.25);
+  }
+
+  .itinerario-content {
+    flex: 1;
+  }
+
+  .cta-tag {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+  }
+
+  .cta-tag.gratis {
+    background: #10b981;
+    color: white;
+  }
+
+  .cta-tag.premium {
+    background: linear-gradient(135deg, var(--gold), #d97706);
+    color: white;
+  }
+
+  .itinerario-content h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--title);
+    margin-bottom: 8px;
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  .itinerario-content p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 15px;
+    line-height: 1.5;
+  }
+
+  .cta-benefits {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 15px;
+  }
+
+  .cta-benefits li {
+    font-size: 0.8rem;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .free-cta .cta-benefits li i {
+    color: #10b981;
+  }
+
+  .premium-cta .cta-benefits li i {
+    color: var(--gold);
+  }
+
+  .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    border-radius: 30px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+  }
+
+  .cta-btn.free {
+    background: #10b981;
+    color: white;
+  }
+
+  .cta-btn.free:hover {
+    background: #059669;
+    transform: scale(1.05);
+  }
+
+  .cta-btn.premium {
+    background: linear-gradient(135deg, var(--gold), #d97706);
+    color: white;
+    box-shadow: 0 5px 20px rgba(244, 185, 66, 0.4);
+  }
+
+  .cta-btn.premium:hover {
+    box-shadow: 0 8px 30px rgba(244, 185, 66, 0.6);
+    transform: scale(1.05);
+  }
+
+  @media (max-width: 768px) {
+    .itinerario-cta {
+      flex-direction: column;
+      text-align: center;
+      padding: 25px 20px;
+    }
+    
+    .cta-benefits {
+      justify-content: center;
+    }
+    
+    .cta-btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  /* ========== SECTION TITLES ========== */
+  .actividades-section h2,
+  .atracciones-section h2,
+  .barrios-section h2,
+  .transporte-section h2,
+  .escapadas-section h2,
+  .gastronomia-section h2,
+  .mapa-section h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--title);
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--border);
+  }
+
+  /* ========== ACTIVIDADES ========== */
+  .actividades-section {
+    margin: 50px 0;
+    padding-top: 40px;
+    border-top: 1px solid var(--border);
+  }
+
+  .actividades-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 15px;
+  }
+
+  .actividad-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 18px 20px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  .actividad-card:hover {
+    border-color: var(--gold);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  }
+
+  .actividad-icon {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(244, 185, 66, 0.15), rgba(117, 170, 219, 0.1));
+    border-radius: 12px;
+    flex-shrink: 0;
+  }
+
+  .actividad-icon i {
+    font-size: 1.2rem;
+    color: var(--gold);
+  }
+
+  .actividad-content h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--title);
+    margin-bottom: 4px;
+  }
+
+  .actividad-content p {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  .actividad-arrow {
+    margin-left: auto;
+    color: var(--gold);
+    font-size: 0.8rem;
+  }
+
+  /* ========== ATRACCIONES ========== */
+  .atracciones-section {
+    margin: 50px 0;
+    padding-top: 40px;
+    border-top: 1px solid var(--border);
+  }
+
+  .atracciones-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+  }
+
+  .atraccion-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .atraccion-card:hover {
+    border-color: var(--gold);
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+  }
+
+  .atraccion-imagen {
+    height: 150px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+  }
+
+  .tag-gratis {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #10b981;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .tag-precio {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--gold);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+  }
+
+  .atraccion-content {
+    padding: 18px;
+  }
+
+  .atraccion-zona {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--gold);
+    font-weight: 600;
+  }
+
+  .atraccion-content h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--title);
+    margin: 6px 0 10px;
+  }
+
+  .atraccion-content p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .atraccion-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--gold);
+    text-decoration: none;
+  }
+
+  /* ========== BARRIOS ========== */
+  .barrios-section {
+    margin: 50px 0;
+    padding-top: 40px;
+    border-top: 1px solid var(--border);
+  }
+
+  .barrios-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+  .barrio-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .barrio-card:hover {
+    border-color: var(--gold);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  }
+
+  .barrio-imagen {
+    height: 140px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+  }
+
+  .barrio-tipo {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(10px);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .barrio-content {
+    padding: 18px;
+  }
+
+  .barrio-content h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--title);
+    margin-bottom: 8px;
+  }
+
+  .barrio-content p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+
+  .barrio-imperdible {
+    font-size: 0.8rem;
+    color: var(--text);
+    padding: 10px 12px;
+    background: var(--bg);
+    border-radius: 10px;
+  }
+
+  .barrio-imperdible span {
+    color: var(--gold);
+    font-weight: 600;
+  }
+
+  /* ========== TRANSPORTE ========== */
+  .transporte-section {
+    margin: 50px 0;
+    padding-top: 40px;
+    border-top: 1px solid var(--border);
+  }
+
+  .aeropuerto-info {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 25px;
+  }
+
+  .aeropuerto-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .aeropuerto-header h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--title);
+    margin: 0;
+  }
+
+  .distancia-badge {
+    background: var(--bg);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  .opciones-transporte {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+  }
+
+  .opcion-card {
+    background: var(--bg);
+    padding: 18px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+
+  .opcion-metodo {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--title);
+    margin-bottom: 10px;
+  }
+
+  .opcion-details {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 12px;
+  }
+
+  .opcion-tiempo,
+  .opcion-precio {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .opcion-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: var(--gold);
+    color: white;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: transform 0.2s;
+  }
+
+  .opcion-btn:hover {
+    transform: scale(1.05);
+  }
+
+  /* ========== ESCAPADAS ========== */
+  .escapadas-section {
+    margin: 50px 0;
+    padding-top: 40px;
+    border-top: 1px solid var(--border);
+  }
+
+  .escapadas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+  }
+
+  .escapada-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  .escapada-card:hover {
+    border-color: var(--gold);
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+  }
+
+  .escapada-imagen {
+    height: 130px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+  }
+
+  .escapada-tags {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    display: flex;
+    gap: 8px;
+  }
+
+  .escapada-distancia,
+  .escapada-tiempo {
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(10px);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 0.65rem;
+    font-weight: 600;
+  }
+
+  .escapada-content {
+    padding: 18px;
+  }
+
+  .escapada-content h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--title);
+    margin-bottom: 8px;
+  }
+
+  .escapada-content p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* ========== GASTRONOMÍA ========== */
+  .gastronomia-section {
+    margin: 50px 0;
+    padding-top: 40px;
+    border-top: 1px solid var(--border);
+  }
+
+  .gastronomia-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+  }
+
+  .gastronomia-categoria {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+  }
+
+  .gastronomia-categoria h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--title);
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .lugares-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .lugar-item {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 10px;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--border);
+  }
+
+  .lugar-item:last-child {
+    border-bottom: none;
+  }
+
+  .lugar-nombre {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--title);
+  }
+
+  .lugar-zona {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+  }
+
+  .lugar-precio {
+    font-size: 0.85rem;
+    color: var(--gold);
+    font-weight: 600;
+  }
+
+  /* ========== MAPA ========== */
+  .mapa-section {
+    margin: 50px 0;
+    padding-top: 40px;
+    border-top: 1px solid var(--border);
+  }
+
+  .mapa-container {
+    position: relative;
+  }
+
+  .mapa-container iframe {
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+  }
+
+  .mapa-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 15px;
+    padding: 10px 20px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 25px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--title);
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .mapa-link:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  /* ========== RESPONSIVE ========== */
+  @media (max-width: 600px) {
+    .actividades-grid,
+    .atracciones-grid,
+    .barrios-grid,
+    .escapadas-grid,
+    .gastronomia-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .opciones-transporte {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ========== HERO CTA BUTTON ========== */
+  .hero-subtitle {
+    font-size: 1.1rem;
+    font-weight: 400;
+    margin-bottom: 5px;
+    opacity: 0.95;
+  }
+
+  .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 25px;
+    padding: 16px 32px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+    transition: all 0.3s ease;
+  }
+
+  .hero-cta:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(16, 185, 129, 0.5);
+  }
+
+  /* ========== LEAD MAGNET ABOVE FOLD ========== */
+  .lead-magnet-above {
+    margin: -30px 0 50px;
+    padding: 0 20px;
+  }
+
+  .lead-magnet-card {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.02));
+    border: 2px solid #10b981;
+    border-radius: 24px;
+    padding: 35px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 30px;
+    box-shadow: 0 15px 50px rgba(16, 185, 129, 0.15);
+  }
+
+  .lead-magnet-content {
+    flex: 1;
+  }
+
+  .lead-magnet-content .tag-gratis {
+    display: inline-block;
+    background: #10b981;
+    color: white;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .lead-magnet-content h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--title);
+    margin-bottom: 10px;
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  .lead-magnet-content > p {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin-bottom: 15px;
+  }
+
+  .lead-benefits {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 15px;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .lead-benefits li {
+    font-size: 0.85rem;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .lead-benefits li i {
+    color: #10b981;
+  }
+
+  .lead-trust {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .lead-trust span {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+  }
+
+  .lead-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 18px 35px;
+    background: #10b981;
+    color: white;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+    transition: all 0.3s ease;
+  }
+
+  .lead-cta-btn:hover {
+    background: #059669;
+    transform: scale(1.05);
+  }
+
+  @media (max-width: 768px) {
+    .lead-magnet-card {
+      flex-direction: column;
+      text-align: center;
+      padding: 20px;
+      gap: 15px;
+    }
+    
+    .lead-magnet-content h2 {
+      font-size: 1.1rem;
+    }
+    
+    .lead-benefits, .lead-trust {
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .lead-cta-btn {
+      width: auto;
+      display: inline-flex;
+      justify-content: center;
+      padding: 12px 24px;
+      font-size: 0.85rem;
+      margin: 0 auto;
+    }
+  }
+
+  /* ========== CHECKLIST SECTION ========== */
+  .checklist-section {
+    margin: 50px 0;
+    padding-top: 40px;
+    border-top: 1px solid var(--border);
+  }
+
+  .checklist-section h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--title);
+    margin-bottom: 10px;
+  }
+
+  .checklist-intro {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin-bottom: 25px;
+  }
+
+  .checklist-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+
+  .checklist-item {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    transition: all 0.3s ease;
+  }
+
+  .checklist-item:hover {
+    border-color: #10b981;
+    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.08);
+  }
+
+  .checklist-icon {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(244, 185, 66, 0.15), rgba(117, 170, 219, 0.1));
+    border-radius: 12px;
+    flex-shrink: 0;
+  }
+
+  .checklist-icon i {
+    font-size: 1.2rem;
+    color: var(--gold);
+  }
+
+  .checklist-content {
+    flex: 1;
+  }
+
+  .checklist-content h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--title);
+    margin-bottom: 5px;
+  }
+
+  .checklist-content p {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    margin: 0;
+  }
+
+  .checklist-status {
+    flex-shrink: 0;
+  }
+
+  .status-badge {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+  }
+
+  @media (max-width: 600px) {
+    .checklist-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ========== PREMIUM CLOSE SECTION ========== */
+  .premium-close-section {
+    margin: 60px 0 40px;
+    padding-top: 40px;
+    border-top: 2px solid var(--gold);
+  }
+
+  .premium-close-card {
+    background: linear-gradient(135deg, rgba(244, 185, 66, 0.1), rgba(168, 85, 247, 0.05));
+    border: 2px solid var(--gold);
+    border-radius: 24px;
+    padding: 45px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .premium-close-card::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 150px;
+    height: 150px;
+    background: linear-gradient(135deg, transparent 50%, rgba(244, 185, 66, 0.1) 50%);
+    transform: rotate(45deg);
+  }
+
+  .premium-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--gold), #d97706);
+    color: white;
+    padding: 8px 20px;
+    border-radius: 25px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+
+  .premium-close-card h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--title);
+    margin-bottom: 10px;
+  }
+
+  .premium-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 30px;
+  }
+
+  .premium-benefits {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 30px;
+    text-align: left;
+  }
+
+  .benefit-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    color: var(--text);
+  }
+
+  .benefit-item i {
+    color: var(--gold);
+  }
+
+  .premium-price {
+    margin-bottom: 25px;
+  }
+
+  .price-tag {
+    display: block;
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--gold);
+    margin-bottom: 5px;
+  }
+
+  .price-note {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+
+  .premium-final-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 18px 40px;
+    background: linear-gradient(135deg, var(--gold), #d97706);
+    color: white;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 10px 40px rgba(244, 185, 66, 0.4);
+    transition: all 0.3s ease;
+  }
+
+  .premium-final-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 50px rgba(244, 185, 66, 0.5);
+  }
+
+  @media (max-width: 600px) {
+    .premium-close-card {
+      padding: 30px 20px;
+    }
+    
+    .premium-close-card h2 {
+      font-size: 1.5rem;
+    }
+    
+    .premium-benefits {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ========== V3: CHECKLIST EMOJI ========== */
+  .checklist-emoji {
+    font-size: 2rem;
+    width: 55px;
+    height: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    border-radius: 14px;
+    flex-shrink: 0;
+  }
+
+  .checklist-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    padding: 10px 18px;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    border-radius: 25px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  .checklist-cta.recomendado {
+    background: linear-gradient(135deg, #10b981, #059669);
+    box-shadow: 0 5px 20px rgba(16, 185, 129, 0.3);
+  }
+
+  .checklist-cta:hover {
+    transform: translateY(-2px);
+  }
+
+  .rec-badge {
+    background: rgba(255,255,255,0.2);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+  }
+
+  .lead-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+  }
+
+  /* ========== V3: BARRIO VIBRA ========== */
+  .barrio-vibra {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(10px);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .barrio-ideal {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  .barrio-ideal strong {
+    color: var(--gold);
+  }
+
+  /* ========== V3: EXPERIENCIAS LIST ========== */
+  .experiencias-section {
+    margin: 50px 0;
+    padding-top: 40px;
+    border-top: 1px solid var(--border);
+  }
+
+  .experiencias-section h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--title);
+    margin-bottom: 25px;
+  }
+
+  .experiencias-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .experiencia-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 20px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    transition: all 0.3s ease;
+  }
+
+  .experiencia-item:hover {
+    border-color: var(--gold);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  }
+
+  .exp-number {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    border-radius: 50%;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+  }
+
+  .exp-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  .exp-content {
+    flex: 1;
+  }
+
+  .exp-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+
+  .exp-header h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--title);
+    margin: 0;
+  }
+
+  .exp-tag {
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: white;
+    text-transform: uppercase;
+  }
+
+  .exp-content > p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin: 0 0 10px;
+    line-height: 1.5;
+  }
+
+  .exp-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--gold);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .exp-cta:hover {
+    color: #d97706;
+  }
+
+  /* Blog Link Box */
+  .blog-link-box {
+    margin-top: 25px;
+    padding: 20px;
+    background: var(--bg);
+    border-radius: 14px;
+    text-align: center;
+  }
+
+  .blog-link-box p {
+    margin: 0 0 12px;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+
+  .blog-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 25px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--title);
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .blog-link:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  /* ========== V3: STRIKETHROUGH PRICE ========== */
+  .price-original {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    text-decoration: line-through;
+    margin-right: 10px;
+  }
+
+  @media (max-width: 600px) {
+    .experiencia-item {
+      flex-wrap: wrap;
+    }
+    
+    .exp-number {
+      width: 26px;
+      height: 26px;
+      font-size: 0.7rem;
+    }
+
+    .exp-icon {
+      font-size: 1.2rem;
+    }
+
+    .exp-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .exp-header {
+      flex-wrap: nowrap;
+      gap: 8px;
+    }
+
+    .exp-header h3 {
+      font-size: 0.9rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .exp-tag {
+      font-size: 0.55rem;
+      padding: 3px 6px;
+      flex-shrink: 0;
+    }
+  }
+</style>

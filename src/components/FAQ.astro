@@ -1,0 +1,192 @@
+---
+/**
+ * FAQ Component
+ * Displays frequently asked questions with Schema.org FAQPage markup
+ * for enhanced SEO and Google rich results
+ */
+
+interface FAQ {
+  pregunta: string;
+  respuesta: string;
+}
+
+interface Props {
+  faqs: FAQ[];
+  destinoTitle: string;
+}
+
+const { faqs, destinoTitle } = Astro.props;
+
+// Generate JSON-LD Schema for FAQPage
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqs.map(faq => ({
+    "@type": "Question",
+    "name": faq.pregunta,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": faq.respuesta
+    }
+  }))
+};
+---
+
+{faqs && faqs.length > 0 && (
+  <section class="faq-section">
+    <div class="section-header">
+      <h2>Preguntas Frecuentes</h2>
+      <span class="badge">FAQ</span>
+    </div>
+    
+    <div class="faq-list">
+      {faqs.map((faq, index) => (
+        <details class="faq-item" open={index === 0}>
+          <summary class="faq-question">
+            <span class="question-icon">
+              <i class="fas fa-question-circle"></i>
+            </span>
+            <span class="question-text">{faq.pregunta}</span>
+            <span class="toggle-icon">
+              <i class="fas fa-chevron-down"></i>
+            </span>
+          </summary>
+          <div class="faq-answer">
+            <p>{faq.respuesta}</p>
+          </div>
+        </details>
+      ))}
+    </div>
+
+    <!-- Schema.org FAQPage for SEO -->
+    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  </section>
+)}
+
+<style>
+  .faq-section {
+    border-top: 1px solid var(--border);
+    padding-top: 40px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding: 0 5px;
+  }
+
+  .section-header h2 {
+    font-size: 1.5rem;
+    color: var(--title);
+    font-weight: 700;
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  .badge {
+    background: var(--gold);
+    color: #fff;
+    font-size: 0.7rem;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .faq-item {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.2s ease;
+  }
+
+  .faq-item:hover {
+    border-color: var(--gold);
+  }
+
+  .faq-item[open] {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  }
+
+  .faq-question {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 20px;
+    cursor: pointer;
+    list-style: none;
+    font-weight: 600;
+    color: var(--title);
+    transition: background 0.2s ease;
+  }
+
+  .faq-question::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-question:hover {
+    background: var(--bg-secondary);
+  }
+
+  .question-icon {
+    color: var(--gold);
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  .question-text {
+    flex: 1;
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+
+  .toggle-icon {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+  }
+
+  .faq-item[open] .toggle-icon {
+    transform: rotate(180deg);
+  }
+
+  .faq-answer {
+    padding: 0 20px 20px 52px;
+  }
+
+  .faq-answer p {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    text-align: justify;
+  }
+
+  @media (max-width: 600px) {
+    .faq-question {
+      padding: 15px;
+      gap: 10px;
+    }
+
+    .faq-answer {
+      padding: 0 15px 15px 42px;
+    }
+
+    .question-text {
+      font-size: 0.9rem;
+    }
+  }
+</style>

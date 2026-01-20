@@ -1,0 +1,359 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Navbar from '../../components/Navbar.astro';
+
+// Requisitos por nacionalidad
+const paises = [
+  { 
+    nombre: "México", 
+    bandera: "🇲🇽", 
+    visa: "No requiere visa", 
+    dias: "90 días", 
+    color: "#10b981" 
+  },
+  { 
+    nombre: "España", 
+    bandera: "🇪🇸", 
+    visa: "No requiere visa", 
+    dias: "90 días", 
+    color: "#10b981" 
+  },
+  { 
+    nombre: "Colombia", 
+    bandera: "🇨🇴", 
+    visa: "No requiere visa", 
+    dias: "90 días", 
+    color: "#10b981" 
+  },
+  { 
+    nombre: "Chile", 
+    bandera: "🇨🇱", 
+    visa: "No requiere visa", 
+    dias: "90 días", 
+    color: "#10b981" 
+  },
+  { 
+    nombre: "Perú", 
+    bandera: "🇵🇪", 
+    visa: "No requiere visa", 
+    dias: "90 días", 
+    color: "#10b981" 
+  },
+  { 
+    nombre: "USA", 
+    bandera: "🇺🇸", 
+    visa: "No requiere visa", 
+    dias: "90 días", 
+    color: "#10b981" 
+  },
+];
+
+const checklistSalud = [
+  { icono: "💉", titulo: "Vacunas", desc: "No hay vacunas obligatorias. Se recomienda COVID, Fiebre Amarilla (Iguazú) y Tétanos." },
+  { icono: "🏥", titulo: "Seguro de Viaje", desc: "Altamente recomendado. Actividades de aventura requieren cobertura especial.", cta: true },
+  { icono: "💊", titulo: "Medicamentos", desc: "Lleva recetas médicas. Farmacias abiertas 24h en ciudades principales." },
+  { icono: "🦟", titulo: "Dengue", desc: "Repelente en zonas tropicales (Iguazú, norte). Pico: Enero-Abril." },
+];
+
+const checklistSeguridad = [
+  { icono: "🚨", titulo: "Emergencias", desc: "Policía: 911 | Ambulancia: 107 | Bomberos: 100" },
+  { icono: "💰", titulo: "Dinero", desc: "No mostrar efectivo. Usar billeteras con RFID. Cuidado en zonas turísticas." },
+  { icono: "📱", titulo: "Celular", desc: "Evitar usar en la calle. Configurar eSIM antes de llegar." },
+  { icono: "🚕", titulo: "Transporte", desc: "Solo taxis oficiales o apps (Uber, Cabify). No aceptar 'remises' en la calle." },
+];
+---
+
+<Layout title="Documentación para Viajar | Instante Trips">
+  <Navbar />
+  
+  <main class="page-container">
+    <header class="page-header">
+      <span class="tag">📋 Info Esencial</span>
+      <h1>Documentación para México</h1>
+      <p>Todo lo que necesitas saber antes de viajar.</p>
+    </header>
+
+    <!-- VISA POR PAÍS -->
+    <section class="info-section">
+      <h2>🛂 Requisitos de Visa por País</h2>
+      <div class="paises-grid">
+        {paises.map(p => (
+          <div class="pais-card">
+            <span class="bandera">{p.bandera}</span>
+            <div class="pais-info">
+              <strong>{p.nombre}</strong>
+              <span class="visa-status" style={`background: ${p.color}20; color: ${p.color}`}>
+                ✓ {p.visa}
+              </span>
+              <small>{p.dias} como turista</small>
+            </div>
+          </div>
+        ))}
+      </div>
+      <p class="note">
+        <strong>Importante:</strong> Verifica siempre con la embajada de tu país. 
+        Necesitas pasaporte vigente mínimo 6 meses.
+      </p>
+    </section>
+
+    <!-- SALUD Y VACUNAS -->
+    <section class="info-section">
+      <h2>💉 Salud y Vacunas</h2>
+      <div class="checklist-grid">
+        {checklistSalud.map(item => (
+          <div class={`check-item ${item.cta ? 'highlight' : ''}`}>
+            <span class="check-icon">{item.icono}</span>
+            <div>
+              <strong>{item.titulo}</strong>
+              <p>{item.desc}</p>
+              {item.cta && (
+                <a href="https://www.worldnomads.com/travel-insurance/?affiliate=instantetrips" 
+                   target="_blank" 
+                   class="cta-btn">
+                  🛡️ Cotiza tu Seguro de Viaje
+                </a>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- SEGURIDAD -->
+    <section class="info-section">
+      <h2>🛡️ Seguridad y Emergencias</h2>
+      <div class="checklist-grid">
+        {checklistSeguridad.map(item => (
+          <div class="check-item">
+            <span class="check-icon">{item.icono}</span>
+            <div>
+              <strong>{item.titulo}</strong>
+              <p>{item.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- CTA FINAL -->
+    <section class="cta-section">
+      <div class="cta-card">
+        <h3>🛡️ No viajes sin seguro</h3>
+        <p>Un accidente de trekking o enfermedad puede costarte miles de dólares.</p>
+        <a href="https://www.worldnomads.com/travel-insurance/?affiliate=instantetrips" 
+           target="_blank" 
+           class="cta-primary">
+          Cotiza Seguro de Viaje →
+        </a>
+        <span class="trust">WorldNomads · Líder en seguros de aventura</span>
+      </div>
+    </section>
+
+    <a href="/mexico/planifica/" class="back-link">← Volver a Planifica</a>
+  </main>
+</Layout>
+
+<style>
+  .page-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 100px 20px 60px;
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: 50px;
+  }
+
+  .tag {
+    background: var(--gold);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  .page-header h1 {
+    font-size: 2.2rem;
+    margin: 15px 0 10px;
+  }
+
+  .page-header p {
+    color: var(--text-secondary);
+  }
+
+  .info-section {
+    margin-bottom: 50px;
+  }
+
+  .info-section h2 {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    color: var(--title);
+  }
+
+  .paises-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 15px;
+  }
+
+  .pais-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .bandera {
+    font-size: 2rem;
+  }
+
+  .pais-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .visa-status {
+    font-size: 0.7rem;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    width: fit-content;
+  }
+
+  .pais-info small {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+  }
+
+  .note {
+    margin-top: 15px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    background: var(--bg);
+    padding: 12px 15px;
+    border-radius: 8px;
+    border-left: 3px solid var(--gold);
+  }
+
+  .checklist-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .check-item {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+  }
+
+  .check-item.highlight {
+    border-color: var(--gold);
+    background: linear-gradient(135deg, var(--card-bg), rgba(244, 185, 66, 0.05));
+  }
+
+  .check-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  .check-item strong {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--title);
+  }
+
+  .check-item p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+
+  .cta-btn {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 10px 18px;
+    background: linear-gradient(135deg, var(--gold), #e6a832);
+    color: white;
+    text-decoration: none;
+    border-radius: 25px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .cta-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(244, 185, 66, 0.3);
+  }
+
+  .cta-section {
+    margin-top: 50px;
+  }
+
+  .cta-card {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    color: white;
+  }
+
+  .cta-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+  }
+
+  .cta-card p {
+    opacity: 0.8;
+    margin-bottom: 25px;
+  }
+
+  .cta-primary {
+    display: inline-block;
+    padding: 15px 35px;
+    background: linear-gradient(135deg, var(--gold), #e6a832);
+    color: white;
+    text-decoration: none;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 1rem;
+    transition: all 0.3s;
+  }
+
+  .cta-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(244, 185, 66, 0.4);
+  }
+
+  .trust {
+    display: block;
+    margin-top: 15px;
+    font-size: 0.8rem;
+    opacity: 0.6;
+  }
+
+  .back-link {
+    display: inline-block;
+    margin-top: 40px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+  }
+
+  .back-link:hover {
+    color: var(--gold);
+  }
+</style>

@@ -1,0 +1,129 @@
+---
+/**
+ * TransportCards Component
+ * Horizontal scrollable cards showing transport options
+ */
+interface Props {
+  options: {
+    icon: string;
+    name: string;
+    price: string;
+    time?: string;
+    note?: string;
+  }[];
+}
+
+const { options } = Astro.props;
+---
+
+<div class="transport-section">
+  <h3 class="transport-title">
+    <i class="fas fa-plane-arrival"></i>
+    Del Aeropuerto al Centro
+  </h3>
+  
+  <div class="transport-scroll">
+    {options.map((opt) => (
+      <div class="transport-card">
+        <div class="transport-icon">
+          <i class={`fas ${opt.icon}`}></i>
+        </div>
+        <span class="transport-name">{opt.name}</span>
+        <span class="transport-price">{opt.price}</span>
+        {opt.time && <span class="transport-time">{opt.time}</span>}
+        {opt.note && <span class="transport-note">{opt.note}</span>}
+      </div>
+    ))}
+  </div>
+</div>
+
+<style>
+  .transport-section {
+    margin: 40px 0;
+  }
+
+  .transport-title {
+    font-size: 1.1rem;
+    color: var(--title);
+    margin: 0 0 20px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+  }
+
+  .transport-title i {
+    color: var(--gold);
+  }
+
+  .transport-scroll {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding-bottom: 15px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .transport-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .transport-card {
+    flex: 0 0 140px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+  }
+
+  .transport-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--gold);
+  }
+
+  .transport-icon {
+    width: 45px;
+    height: 45px;
+    background: linear-gradient(135deg, var(--celeste), #93c5fd);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .transport-icon i {
+    color: white;
+    font-size: 1.1rem;
+  }
+
+  .transport-name {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+  }
+
+  .transport-price {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--title);
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  .transport-time {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+  }
+
+  .transport-note {
+    font-size: 0.7rem;
+    color: var(--gold);
+    font-weight: 600;
+  }
+</style>

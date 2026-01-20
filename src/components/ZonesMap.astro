@@ -1,0 +1,144 @@
+---
+/**
+ * ZonesMap Component
+ * Visual representation of city zones with color coding
+ */
+interface Props {
+  zones: {
+    type: 'dormir' | 'turistear' | 'evitar';
+    name: string;
+    areas: string;
+    tip?: string;
+  }[];
+}
+
+const { zones } = Astro.props;
+
+const getZoneStyle = (type: string) => {
+  switch(type) {
+    case 'dormir': return { color: '#22c55e', icon: 'fa-bed', emoji: '🟢' };
+    case 'turistear': return { color: '#3b82f6', icon: 'fa-camera', emoji: '🔵' };
+    case 'evitar': return { color: '#ef4444', icon: 'fa-exclamation-triangle', emoji: '🔴' };
+    default: return { color: '#6b7280', icon: 'fa-map-marker', emoji: '⚪' };
+  }
+};
+---
+
+<div class="zones-container">
+  <h3 class="zones-title">
+    <i class="fas fa-map-marked-alt"></i>
+    Mapa Mental de Zonas
+  </h3>
+  
+  <div class="zones-grid">
+    {zones.map((zone) => {
+      const style = getZoneStyle(zone.type);
+      return (
+        <div class={`zone-card zone-${zone.type}`}>
+          <div class="zone-header">
+            <span class="zone-emoji">{style.emoji}</span>
+            <span class="zone-type">{zone.name}</span>
+          </div>
+          <p class="zone-areas">{zone.areas}</p>
+          {zone.tip && <p class="zone-tip">{zone.tip}</p>}
+        </div>
+      );
+    })}
+  </div>
+</div>
+
+<style>
+  .zones-container {
+    margin: 40px 0;
+    padding: 30px;
+    background: var(--card-bg);
+    border-radius: 20px;
+    border: 1px solid var(--border);
+  }
+
+  .zones-title {
+    font-size: 1.1rem;
+    color: var(--title);
+    margin: 0 0 25px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+  }
+
+  .zones-title i {
+    color: var(--gold);
+  }
+
+  .zones-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+  }
+
+  .zone-card {
+    padding: 20px;
+    border-radius: 14px;
+    border: 2px solid;
+    transition: transform 0.3s ease;
+  }
+
+  .zone-card:hover {
+    transform: translateY(-3px);
+  }
+
+  .zone-dormir {
+    background: rgba(34, 197, 94, 0.08);
+    border-color: rgba(34, 197, 94, 0.3);
+  }
+
+  .zone-turistear {
+    background: rgba(59, 130, 246, 0.08);
+    border-color: rgba(59, 130, 246, 0.3);
+  }
+
+  .zone-evitar {
+    background: rgba(239, 68, 68, 0.08);
+    border-color: rgba(239, 68, 68, 0.3);
+  }
+
+  .zone-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .zone-emoji {
+    font-size: 1.2rem;
+  }
+
+  .zone-type {
+    font-weight: 800;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--title);
+  }
+
+  .zone-areas {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .zone-tip {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin: 10px 0 0 0;
+    font-style: italic;
+    opacity: 0.8;
+  }
+
+  @media (max-width: 768px) {
+    .zones-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

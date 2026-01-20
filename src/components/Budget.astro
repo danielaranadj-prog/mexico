@@ -1,0 +1,122 @@
+---
+interface Props {
+  total: number;
+  spent: number;
+}
+
+const { total, spent } = Astro.props;
+const percentage = Math.round((spent / total) * 100);
+---
+
+<div class="budget-card">
+  <div class="budget-header">
+    <div class="budget-info">
+      <span class="budget-label">Presupuesto del Viaje</span>
+      <h3 class="budget-amount">${spent.toLocaleString()} <span class="total-limit">/ ${total.toLocaleString()} USD</span></h3>
+    </div>
+    <div class="percentage-badge">{percentage}%</div>
+  </div>
+
+  <div class="progress-container">
+    <div class="progress-bar" style={`width: ${percentage}%`}></div>
+  </div>
+
+  <div class="budget-footer">
+    <div class="status-item">
+      <i class="fas fa-check-circle"></i>
+      <span>Pagado</span>
+    </div>
+    <div class="status-item pending">
+      <i class="fas fa-clock"></i>
+      <span>Pendiente</span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .budget-card {
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 25px;
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    margin: 20px 0;
+  }
+
+  .budget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+  }
+
+  .budget-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .budget-amount {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin: 5px 0 0 0;
+    color: var(--title);
+  }
+
+  .total-limit {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+  }
+
+  .percentage-badge {
+    background: var(--gold);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 0.9rem;
+  }
+
+  .progress-container {
+    height: 12px;
+    background: var(--bg);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), #EBC678);
+    border-radius: 10px;
+    transition: width 1s ease-out;
+  }
+
+  .budget-footer {
+    display: flex;
+    gap: 20px;
+    border-top: 1px solid var(--border);
+    padding-top: 15px;
+  }
+
+  .status-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--gold);
+  }
+
+  .status-item.pending {
+    color: var(--text-secondary);
+  }
+
+  /* Modo oscuro */
+  @media (prefers-color-scheme: dark) {
+    .progress-container { background: #2C2C2E; }
+  }
+</style>

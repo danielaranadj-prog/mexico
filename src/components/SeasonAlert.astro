@@ -1,0 +1,74 @@
+---
+interface Props {
+  summer: string;
+  winter: string;
+}
+
+const { summer, winter } = Astro.props;
+---
+
+<div class="weather-card">
+    <div class="weather-item">
+        <i class="fas fa-sun"></i>
+        <div>
+            <span class="label">Verano</span>
+            <span class="value">{summer}</span>
+        </div>
+    </div>
+    <div class="divider"></div>
+    <div class="weather-item">
+        <i class="fas fa-snowflake"></i>
+        <div>
+            <span class="label">Invierno</span>
+            <span class="value">{winter}</span>
+        </div>
+    </div>
+</div>
+
+<style>
+    .weather-card {
+        background: var(--card-bg); /* */
+        border-radius: 12px;
+        padding: 20px;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        border: 1px solid var(--border); /* */
+        margin-top: -40px; /* Para que suba un poco y "pise" al Hero */
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        position: relative;
+        z-index: 10;
+    }
+
+    .weather-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .weather-item i {
+        font-size: 1.5rem;
+        color: var(--gold); /* */
+    }
+
+    .label {
+        display: block;
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        font-weight: 700;
+        color: var(--text-secondary); /* */
+        letter-spacing: 0.5px;
+    }
+
+    .value {
+        font-size: 0.95rem;
+        font-weight: 800;
+        color: var(--title); /* */
+    }
+
+    .divider {
+        width: 1px;
+        height: 30px;
+        background: var(--border);
+    }
+</style>

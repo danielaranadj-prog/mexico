@@ -1,0 +1,240 @@
+---
+/**
+ * LeadMagnet Component
+ * Displays a call-to-action for free downloadable content
+ * Designed to capture leads or provide direct PDF downloads
+ */
+
+interface LeadMagnet {
+  titulo: string;
+  descripcion: string;
+  archivo: string;
+  imagen?: string;
+}
+
+interface Props {
+  leadMagnet: LeadMagnet;
+  destinoTitle: string;
+}
+
+const { leadMagnet, destinoTitle } = Astro.props;
+
+// Default image if none provided
+const imagenUrl = leadMagnet.imagen || '/mexico/checklist-default.jpg';
+---
+
+{leadMagnet && (
+  <section class="leadmagnet-section">
+    <div class="leadmagnet-card">
+      <div class="leadmagnet-image">
+        <img src={imagenUrl} alt={leadMagnet.titulo} loading="lazy" />
+        <div class="free-badge">
+          <i class="fas fa-gift"></i> GRATIS
+        </div>
+      </div>
+      
+      <div class="leadmagnet-content">
+        <div class="content-header">
+          <span class="eyebrow">📥 Recurso Descargable</span>
+          <h3>{leadMagnet.titulo}</h3>
+        </div>
+        
+        <p class="description">{leadMagnet.descripcion}</p>
+        
+        <div class="features">
+          <div class="feature">
+            <i class="fas fa-check-circle"></i>
+            <span>PDF listo para imprimir</span>
+          </div>
+          <div class="feature">
+            <i class="fas fa-check-circle"></i>
+            <span>Sin necesidad de registro</span>
+          </div>
+          <div class="feature">
+            <i class="fas fa-check-circle"></i>
+            <span>Actualizado {new Date().getFullYear()}</span>
+          </div>
+        </div>
+        
+        <a href={leadMagnet.archivo} download class="download-btn">
+          <i class="fas fa-download"></i>
+          Descargar Ahora
+        </a>
+        
+        <p class="disclaimer">
+          *Contenido creado por viajeros locales
+        </p>
+      </div>
+    </div>
+  </section>
+)}
+
+<style>
+  .leadmagnet-section {
+    margin: 50px 0;
+    padding: 0 5px;
+  }
+
+  .leadmagnet-card {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    background: linear-gradient(135deg, var(--card-bg) 0%, var(--bg-secondary) 100%);
+    border: 2px solid var(--gold);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  }
+
+  @media (min-width: 768px) {
+    .leadmagnet-card {
+      grid-template-columns: 280px 1fr;
+    }
+  }
+
+  .leadmagnet-image {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+  }
+
+  @media (min-width: 768px) {
+    .leadmagnet-image {
+      height: auto;
+      min-height: 300px;
+    }
+  }
+
+  .leadmagnet-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .free-badge {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: var(--gold);
+    color: white;
+    padding: 8px 14px;
+    border-radius: 25px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+
+  .leadmagnet-content {
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .content-header {
+    margin-bottom: 15px;
+  }
+
+  .eyebrow {
+    font-size: 0.75rem;
+    color: var(--gold);
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .content-header h3 {
+    font-size: 1.5rem;
+    color: var(--title);
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.3;
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  .description {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+
+  .features {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 25px;
+  }
+
+  .feature {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+
+  .feature i {
+    color: #22c55e;
+    font-size: 0.9rem;
+  }
+
+  .download-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: linear-gradient(135deg, #171717 0%, #262626 100%);
+    color: white;
+    padding: 16px 32px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+
+  .download-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  }
+
+  .download-btn:active {
+    transform: translateY(0);
+  }
+
+  /* Dark mode adjustments */
+  :global(body.dark) .download-btn {
+    background: linear-gradient(135deg, var(--gold) 0%, #d97706 100%);
+  }
+
+  .disclaimer {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    opacity: 0.6;
+    margin-top: 15px;
+    margin-bottom: 0;
+  }
+
+  @media (max-width: 600px) {
+    .leadmagnet-content {
+      padding: 25px 20px;
+    }
+
+    .content-header h3 {
+      font-size: 1.3rem;
+    }
+
+    .download-btn {
+      width: 100%;
+      padding: 14px 24px;
+    }
+  }
+</style>

@@ -1,0 +1,17 @@
+{
+  "name": "Argentina 2026",
+  "short_name": "Argentina 26",
+  "start_url": "/argentina/index.html",
+  "scope": "/argentina/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/argentina/logo-ios.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}

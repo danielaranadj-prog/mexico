@@ -1,0 +1,22 @@
+:root {
+    /* PALETA ARGENTINA DARK */
+    --bg-color: #0b1116;     /* Negro azulado profundo */
+    --card-bg: #161f29;      /* Azul acero oscuro */
+    --text-color: #ffffff;
+    --text-muted: #9caab9;   /* Gris azulado */
+    
+    /* ACENTOS */
+    --celeste: #75AADB;      /* Celeste Bandera */
+    --sol: #F4B942;          /* Dorado Sol de Mayo */
+    --accent: var(--celeste);
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Inter', sans-serif;
+    margin: 0; padding: 0; line-height: 1.6;
+    /* Degradado sutil en el top */
+    background-image: linear-gradient(to bottom, rgba(117, 170, 219, 0.08) 0%, var(--bg-color) 400px);
+}
+a { text-decoration: none; color: inherit; }

@@ -1,0 +1,191 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+
+const tools = [
+  {
+    title: "Tours y Actividades",
+    desc: "Explora y reserva excursiones en todas las ciudades.",
+    icon: "fa-ticket-alt",
+    // CORRECCIÓN: Apuntamos a la ruta URL, no al archivo .astro
+    link: "/mexico/tours", 
+    color: "#C5A059", 
+    active: true
+  },
+  {
+    title: "Documentación",
+    desc: "Requisitos de entrada, vacunas y seguridad.",
+    icon: "fa-passport",
+    link: "/mexico/planifica/documentacion", 
+    color: "#FF3B30", 
+    active: true
+  },
+  {
+    title: "Calculadora",
+    desc: "Estima cuánto vas a gastar día por día.",
+    icon: "fa-calculator",
+    link: "#", 
+    color: "#34C759", 
+    active: false
+  },
+  {
+    title: "Rutas Sugeridas",
+    desc: "Itinerarios de 10, 15 y 20 días optimizados.",
+    icon: "fa-map-marked-alt",
+    link: "#", 
+    color: "#007AFF", 
+    active: false
+  }
+];
+---
+
+<Layout title="Planifica tu Viaje | Instante Trips">
+  <Navbar />
+  
+  <main class="plan-container">
+    <header class="header-minimal">
+      <h1>Planifica tu Aventura</h1>
+      <p>Todas las herramientas para organizar tu viaje a México en un solo lugar.</p>
+    </header>
+
+    <div class="tools-grid">
+      {tools.map((tool) => (
+        <a href={tool.link} class={`tool-card ${!tool.active ? 'disabled' : ''}`}>
+          <div class="icon-box" style={`background-color: ${tool.color}20; color: ${tool.color}`}>
+            <i class={`fas ${tool.icon}`}></i>
+          </div>
+          
+          <div class="card-text">
+            <h3>
+              {tool.title}
+              {!tool.active && <span class="coming-soon">Pronto</span>}
+            </h3>
+            <p>{tool.desc}</p>
+          </div>
+
+          {tool.active && (
+            <div class="arrow-icon">
+              <i class="fas fa-chevron-right"></i>
+            </div>
+          )}
+        </a>
+      ))}
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .plan-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 120px 20px 60px 20px;
+    min-height: 100vh;
+  }
+
+  .header-minimal {
+    text-align: center;
+    margin-bottom: 60px;
+  }
+
+  .header-minimal h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    letter-spacing: -1px;
+  }
+
+  .header-minimal p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  /* --- GRID ESTILO AJUSTES DE iOS --- */
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+
+  .tool-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 25px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .tool-card:hover:not(.disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    border-color: var(--border);
+  }
+
+  /* Icono con fondo suave */
+  .icon-box {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  .card-text {
+    flex-grow: 1;
+  }
+
+  .card-text h3 {
+    font-size: 1.2rem;
+    margin: 0 0 5px 0;
+    color: var(--title);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card-text p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .arrow-icon {
+    color: var(--text-secondary);
+    opacity: 0.5;
+    font-size: 0.9rem;
+  }
+
+  /* --- ESTADO DESHABILITADO / PRONTO --- */
+  .tool-card.disabled {
+    opacity: 0.7;
+    cursor: default;
+  }
+
+  .coming-soon {
+    font-size: 0.6rem;
+    background: var(--border);
+    color: var(--text-secondary);
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  @media (max-width: 600px) {
+    .header-minimal h1 { font-size: 2rem; }
+    .plan-container { padding-top: 100px; }
+    .tool-card { padding: 20px; }
+  }
+</style>

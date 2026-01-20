@@ -1,0 +1,400 @@
+---
+/* Navbar Final: Blog al final de la lista */
+---
+<nav class="navbar">
+  <div class="nav-container">
+    
+    <a href="/mexico" class="logo-wrapper">
+      <img src="/mexico/logo.svg" alt="Instante Trips Logo" class="adaptive-logo" />
+      <div class="identity-badge">
+        <span class="badge-divider"></span>
+        <span class="flag">🇲🇽</span>
+        <span class="region">MEX</span>
+      </div>
+    </a>
+
+    <div class="nav-actions">
+      
+      <div class="destination-wrapper">
+        <button id="dest-toggle" class="icon-btn" aria-label="Cambiar Destino">
+          <i class="fas fa-globe-americas"></i>
+        </button>
+        
+        <div id="dest-popup" class="dest-popup">
+          <span class="popup-title">Cambiar Destino</span>
+          <ul class="dest-list">
+            <li>
+              <a href="/mexico" class="dest-item active">
+                <span>🇲🇽</span> México (Actual)
+              </a>
+            </li>
+            <li>
+              <a href="/argentina" class="dest-item">
+                <span>🇦🇷</span> Argentina
+              </a>
+            </li>
+            <li>
+              <span class="dest-item disabled">
+                <span>🇪🇸</span> España (Pronto)
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <button id="menu-toggle" class="menu-btn" aria-label="Abrir menú">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+  </div>
+
+  <div id="mobile-menu" class="mobile-nav">
+    <div class="menu-header">
+      <span class="menu-title">MENÚ PRINCIPAL</span>
+    </div>
+    
+    <div class="menu-links">
+      
+      <a href="/mexico/#destinos" class="menu-link">
+        <i class="fas fa-map-marked-alt"></i> Destinos
+      </a>
+      
+      <a href="/mexico/tours" class="menu-link">
+        <i class="fas fa-ticket-alt"></i> Experiencias
+      </a>
+
+      <a href="/mexico/planifica" class="menu-link">
+         <i class="fas fa-question-circle"></i> Planifica tu viaje
+      </a>
+
+      <div class="divider"></div>
+
+     <a href="https://blog.instantetrips.com" class="menu-link highlight-link" target="_blank">
+         <i class="fas fa-newspaper"></i> Blog de Viajes
+         </a>
+
+    </div>
+  </div>
+</nav>
+
+<script>
+  // LÓGICA DEL MENÚ Y POPUP
+  const menuBtn = document.getElementById('menu-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const menuIcon = menuBtn?.querySelector('i');
+  
+  const destBtn = document.getElementById('dest-toggle');
+  const destPopup = document.getElementById('dest-popup');
+
+  const toggleMenu = () => {
+    mobileMenu?.classList.toggle('active');
+    destPopup?.classList.remove('active');
+    
+    if (mobileMenu?.classList.contains('active')) {
+      menuIcon?.classList.remove('fa-bars');
+      menuIcon?.classList.add('fa-times');
+    } else {
+      menuIcon?.classList.remove('fa-times');
+      menuIcon?.classList.add('fa-bars');
+    }
+  };
+
+  const toggleDest = () => {
+    destPopup?.classList.toggle('active');
+    if (mobileMenu?.classList.contains('active')) toggleMenu();
+  };
+
+  menuBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleMenu();
+  });
+
+  destBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleDest();
+  });
+
+  document.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement;
+    
+    if (mobileMenu?.classList.contains('active') && !mobileMenu.contains(target) && !menuBtn?.contains(target)) {
+      toggleMenu();
+    }
+    
+    if (destPopup?.classList.contains('active') && !destPopup.contains(target) && !destBtn?.contains(target)) {
+      destPopup.classList.remove('active');
+    }
+  });
+</script>
+
+<style>
+  /* --- ESTILOS BASE PREMIUM --- */
+  .navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 70px;
+    background: var(--nav-bg, rgba(255,255,255,0.85));
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    border-bottom: none;
+    padding-top: env(safe-area-inset-top);
+  }
+
+  /* Animated gradient border bottom */
+  .navbar::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--gold), var(--celeste), var(--gold));
+    background-size: 200% 100%;
+    animation: borderGlow 3s ease infinite;
+  }
+
+  .nav-container {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+  }
+
+  /* --- LOGO --- */
+  .logo-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: var(--title, #000);
+  }
+
+  .adaptive-logo {
+    height: 32px;
+    width: auto;
+    transition: filter 0.3s ease;
+  }
+
+  .identity-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 28px;
+    padding-left: 2px;
+  }
+
+  .badge-divider {
+    width: 1px;
+    height: 80%;
+    background-color: var(--border, #ccc);
+    margin-right: 4px;
+    opacity: 0.7;
+  }
+
+  .flag { font-size: 1.2rem; line-height: 1; }
+  .region {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    opacity: 0.6;
+    letter-spacing: 0.5px;
+  }
+
+  /* --- ACCIONES --- */
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .icon-btn, .menu-btn {
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    cursor: pointer;
+    color: var(--title);
+    padding: 5px;
+    transition: transform 0.2s, color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .icon-btn:hover, .menu-btn:hover {
+    color: var(--gold, #D4AF37);
+    transform: scale(1.1);
+  }
+
+  /* --- POPUP DESTINOS --- */
+  .destination-wrapper { position: relative; }
+
+  .dest-popup {
+    position: absolute;
+    top: 150%;
+    right: -20px;
+    width: 200px;
+    background: var(--card-bg, rgba(255,255,255,0.95));
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border, rgba(0,0,0,0.1));
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-10px);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 2001;
+  }
+
+  .dest-popup.active {
+    opacity: 1;
+    pointer-events: all;
+    transform: translateY(0);
+  }
+
+  .popup-title {
+    display: block;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-light, #888);
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid var(--border, rgba(0,0,0,0.1));
+  }
+
+  .dest-list { list-style: none; padding: 0; margin: 0; }
+  .dest-list li { margin-bottom: 8px; }
+
+  .dest-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--text, #333);
+    font-size: 0.9rem;
+    padding: 8px;
+    border-radius: 8px;
+    transition: background 0.2s;
+  }
+
+  .dest-item.active {
+    background: rgba(212, 175, 55, 0.1);
+    color: var(--gold, #D4AF37);
+    font-weight: 600;
+  }
+
+  .dest-item.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    filter: grayscale(1);
+  }
+
+  /* --- MENÚ MÓVIL --- */
+  .mobile-nav {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 75%; 
+    max-width: 300px;
+    height: 100vh;
+    background: var(--card-bg, #fff);
+    transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    padding: 100px 30px; 
+    z-index: 1999;
+    box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mobile-nav.active { right: 0; }
+
+  .menu-header { 
+    margin-bottom: 30px; 
+    border-bottom: 1px solid var(--border); 
+    padding-bottom: 10px; 
+  }
+
+  .menu-title { 
+    font-size: 0.7rem; 
+    color: var(--gold, #D4AF37);
+    font-weight: 800; 
+    letter-spacing: 2px; 
+    text-transform: uppercase;
+  }
+
+  .menu-links { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 20px; 
+  }
+
+  .menu-link { 
+    font-size: 1.2rem; 
+    font-weight: 600; 
+    color: var(--text, #333);
+    display: flex; 
+    align-items: center; 
+    gap: 15px; 
+    text-decoration: none;
+    transition: color 0.2s, transform 0.2s;
+    position: relative;
+    padding-bottom: 4px;
+  }
+
+  .menu-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 40px;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--gold), var(--celeste));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+
+  .menu-link:hover::after {
+    transform: scaleX(1);
+  }
+
+  .menu-link:hover {
+    color: var(--gold);
+    transform: translateX(5px);
+  }
+
+  /* Destacado del Blog */
+  .highlight-link {
+    color: var(--title);
+    font-weight: 700;
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border, #ccc);
+    opacity: 0.3;
+    margin: 5px 0;
+  }
+
+  .menu-link i { 
+    color: var(--gold, #D4AF37); 
+    width: 25px; 
+    text-align: center; 
+  }
+
+  @media (prefers-color-scheme: light) {
+    .menu-btn, .icon-btn { filter: brightness(0); }
+  }
+  @media (prefers-color-scheme: dark) {
+    .menu-btn, .icon-btn { filter: brightness(0) invert(1); }
+  }
+</style>
