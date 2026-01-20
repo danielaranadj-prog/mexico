@@ -3,7 +3,7 @@ title: "Tepic"
 img: "/mexico/uploads/tepic.jpg"
 desc: "La joya oculta de Nayarit: Cultura, historia y naturaleza entre montañas."
 historia: "Tepic, la capital de Nayarit, es una ciudad que respira historia y tradición. Fundada en el valle de Matatipac, a las faldas del volcán Sangangüey, es la cuna del poeta Amado Nervo. Aquí, la arquitectura colonial se mezcla con la herencia indígena Huichol y Cora, ofreciendo una experiencia auténtica lejos de las multitudes turísticas."
-secciones:
+secciones: []
 tours: []
 faqs:
   - pregunta: "¿Cuál es la mejor época para viajar?"
