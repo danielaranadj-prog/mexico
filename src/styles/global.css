@@ -1,24 +1,60 @@
 @import "tailwindcss";
 
 :root {
-    /* PALETA ARGENTINA DARK */
-    --bg-color: #0b1116;     /* Negro azulado profundo */
-    --card-bg: #161f29;      /* Azul acero oscuro */
-    --text-color: #ffffff;
-    --text-muted: #9caab9;   /* Gris azulado */
-    
-    /* ACENTOS */
-    --celeste: #75AADB;      /* Celeste Bandera */
-    --sol: #F4B942;          /* Dorado Sol de Mayo */
-    --accent: var(--celeste);
+    /* --- VARIABLES DE DISEÑO PREMIUM (MODO CLARO POR DEFECTO) --- */
+
+    /* Fondos */
+    --bg: #F8F9FA;
+    --card-bg: #FFFFFF;
+
+    /* Texto */
+    --text: #2D3748;
+    --text-secondary: #64748b;
+    --title: #1a202c;
+    --border: #e2e8f0;
+
+    /* Acentos Premium */
+    --gold: #F4B942;
+    --celeste: #75AADB;
+    --accent: var(--gold);
+
+    /* Gradientes */
+    --gradient-primary: linear-gradient(135deg, var(--gold), var(--celeste));
+    --gradient-gold: linear-gradient(90deg, var(--gold), #fcd34d, var(--gold));
+
+    /* Navegación */
+    --nav-bg: rgba(255, 255, 255, 0.85);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        /* Fondos Dark */
+        --bg: #0f172a;
+        --card-bg: #1e293b;
+
+        /* Texto Dark */
+        --text: #f1f5f9;
+        --text-secondary: #94a3b8;
+        --title: #f8fafc;
+        --border: #334155;
+
+        /* Navegación Dark */
+        --nav-bg: rgba(15, 23, 42, 0.85);
+    }
 }
 
 body {
-    background-color: var(--bg-color);
-    color: var(--text-color);
+    background-color: var(--bg);
+    color: var(--text);
     font-family: 'Inter', sans-serif;
-    margin: 0; padding: 0; line-height: 1.6;
-    /* Degradado sutil en el top */
-    background-image: linear-gradient(to bottom, rgba(117, 170, 219, 0.08) 0%, var(--bg-color) 400px);
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    /* Degradado sutil en el top para ambos modos (usando opacidad) */
+    background-image: linear-gradient(to bottom, rgba(117, 170, 219, 0.08) 0%, transparent 400px);
 }
-a { text-decoration: none; color: inherit; }
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
