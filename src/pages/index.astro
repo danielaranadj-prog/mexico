@@ -42,7 +42,7 @@ const feriados = [
             <div class="intro-content">
                 <div class="intro-text">
                     <span class="intro-badge">🇲🇽 Bienvenido</span>
-                    <h2>Descubre <span class="highlight-gold">México</span></h2>
+                    <h2>Descubre <span class="highlight-mexico">México</span></h2>
                     <p class="intro-lead">
                         Un país vibrante donde las culturas ancestrales conviven con la modernidad.
                         Desde las playas turquesas del Caribe hasta los pueblos mágicos y las grandes metrópolis,
@@ -501,6 +501,16 @@ const feriados = [
         -webkit-background-clip: text;
         background-clip: text;
         -webkit-text-fill-color: transparent;
+    }
+
+    .highlight-mexico {
+        /* Gradiente Premium: Turquesa -> Rosa Mexicano -> Oro */
+        background: linear-gradient(90deg, #0891B2, #E11D48, #D97706);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 800;
+        filter: drop-shadow(0 2px 10px rgba(225, 29, 72, 0.2));
     }
     
     .intro-lead {
