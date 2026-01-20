@@ -81,6 +81,11 @@ experiencias:
     descripcion: "En epoca tenemos el Beisboll de la liga mexica del pacifico"
     cta: "hola"
     ctaLink: "aqui compralo"
+  - titulo: "Bellavista"
+    icono: "🎯"
+    tag: "GRATIS"
+    tagColor: "#10b981"
+    descripcion: "Ex antigua fabrica de textiles, convertida en museo"
 premiumGuide:
   titulo: "Nayarit al Completo"
   subtitulo: "Itinerario de 7 Días"
