@@ -7,6 +7,8 @@ interface Props {
 
 const { title, description = "Guía de viaje personalizada para México 2026 - Itinerarios, tours y consejos prácticos", image = "/mexico/og-image.jpg" } = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, 'https://www.instantetrips.com');
+
+import '../styles/global.css';
 ---
 
 <!DOCTYPE html>

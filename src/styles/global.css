@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 :root {
     /* PALETA ARGENTINA DARK */
     --bg-color: #0b1116;     /* Negro azulado profundo */
