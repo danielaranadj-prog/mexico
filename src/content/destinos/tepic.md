@@ -1,3 +1,4 @@
+---
 title: "Tepic"
 img: "/mexico/uploads/tepic.jpg"
 desc: "La joya oculta de Nayarit: Cultura, historia y naturaleza entre montañas."
@@ -44,10 +45,10 @@ experiencias:
     icono: "⛪"
     tag: "IMPERDIBLE"
     tagColor: "#f59e0b"
-    descripcion: "Imamponente arquitectura neogótica frente a la Plaza de Armas. Un ícono de la ciudad."
+    descripcion: "Imponente arquitectura neogótica frente a la Plaza de Armas. Un ícono de la ciudad."
   - titulo: "Casa Museo Amado Nervo"
     icono: "📖"
-    tag: "IS CULTURAL"
+    tag: "CULTURAL"
     tagColor: "#3b82f6"
     descripcion: "Hogar donde nació el famoso poeta. Un viaje íntimo a su vida y obra."
   - titulo: "Parque La Loma"
@@ -133,3 +134,4 @@ premiumGuide:
   precioOferta: "9.99"
   moneda: "USD"
   link: "/planifica/?destino=tepic"
+---
