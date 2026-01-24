@@ -1,0 +1,144 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Card from '../components/Card.astro';
+import { getCollection } from 'astro:content';
+
+// Fetch a few destinations to show as suggestions
+const destinosCollection = await getCollection('destinos');
+const suggestedDestinos = destinosCollection
+    .slice(0, 3)
+    .map(destino => ({
+        id: destino.slug,
+        title: destino.data.title,
+        tag: destino.data.secciones?.[0]?.label || 'Destino',
+        activity: destino.data.desc,
+        img: destino.data.img
+    }));
+---
+
+<Layout title="404 - Página no encontrada">
+    <Navbar />
+
+    <main class="error-container">
+        <div class="error-content">
+            <div class="error-badge">404</div>
+            <h1>¡Te perdiste entre los <span class="highlight-mexico">Agaves!</span></h1>
+            <p class="error-lead">
+                Parece que la página que buscas se fue de fiesta. <br>
+                No te preocupes, en México siempre hay un nuevo pueblo mágico por conocer.
+            </p>
+            
+            <a href="/mexico/" class="btn-home">
+                <i class="fas fa-compass"></i> Volver al Inicio
+            </a>
+        </div>
+
+        <section class="suggestions">
+            <h3>¿Buscabas alguno de estos destinos?</h3>
+            <div class="grid">
+                {suggestedDestinos.map((d) => (
+                    <a href={`/mexico/destinos/${d.id}`} class="card-link">
+                        <Card title={d.title} tag={d.tag} activity={d.activity} img={d.img} />
+                    </a>
+                ))}
+            </div>
+        </section>
+    </main>
+</Layout>
+
+<style>
+    .error-container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 120px 20px 60px 20px;
+        text-align: center;
+        min-height: 80vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .error-content {
+        margin-bottom: 60px;
+    }
+
+    .error-badge {
+        font-size: 6rem;
+        font-weight: 800;
+        /* Gradient Mexico: Turquoise -> Pink -> Gold */
+        background: linear-gradient(135deg, #0891B2, #E11D48, #D97706);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-family: 'Montserrat', sans-serif;
+        line-height: 1;
+        margin-bottom: 20px;
+    }
+
+    h1 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--title, #1a202c);
+        margin-bottom: 20px;
+    }
+
+    .highlight-mexico {
+        background: linear-gradient(90deg, #0891B2, #E11D48, #D97706);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .error-lead {
+        font-size: 1.2rem;
+        color: var(--text-secondary, #4a5568);
+        line-height: 1.6;
+        margin-bottom: 40px;
+    }
+
+    .btn-home {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: linear-gradient(90deg, #E11D48, #D97706);
+        color: white;
+        padding: 15px 30px;
+        border-radius: 50px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .btn-home:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(225, 29, 72, 0.3);
+    }
+
+    .suggestions h3 {
+        font-size: 1.2rem;
+        text-transform: uppercase;
+        color: var(--text-muted, #a0aec0);
+        margin-bottom: 30px;
+        letter-spacing: 1px;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+        text-align: left;
+    }
+
+    .card-link {
+        display: block;
+        text-decoration: none;
+        transition: transform 0.3s ease;
+    }
+
+    .card-link:hover {
+        transform: translateY(-5px);
+    }
+</style>
