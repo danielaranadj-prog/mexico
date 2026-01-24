@@ -97,10 +97,15 @@ const {
         const outbound = form.outbound.value;
         const inbound = form.inbound.value;
         
-        // Construir URL de Skyscanner
-        let url = `https://www.skyscanner.com/transport/flights/${origin}/${destination}/${outbound.replace(/-/g, '')}`;
-        if (inbound) {
-            url += `/${inbound.replace(/-/g, '')}`;
+        // Construir URL de Skyscanner (Sanitized)
+        const safeOrigin = encodeURIComponent(origin);
+        const safeDest = encodeURIComponent(destination);
+        const safeOutbound = outbound.replace(/-/g, '');
+        const safeInbound = inbound ? inbound.replace(/-/g, '') : '';
+        
+        let url = `https://www.skyscanner.com/transport/flights/${safeOrigin}/${safeDest}/${safeOutbound}`;
+        if (safeInbound) {
+            url += `/${safeInbound}`;
         }
         url += '/?adultsv2=1&cabinclass=economy&childrenv2=&ref=home&preferdirects=false&outboundaltsenabled=false&inboundaltsenabled=false';
         
