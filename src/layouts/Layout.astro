@@ -51,6 +51,57 @@ import '../styles/global.css';
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600;800&family=Inter:wght@300;400&family=IBM+Plex+Serif:wght@400;500;600&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     </head>
+    <script>
+        // GUARDIAN SCRIPT - MAINTENANCE MODE
+        (async function() {
+            try {
+                const COUNTRY = 'mexico'; // Change for each repo
+                const URL = 'https://firestore.googleapis.com/v1/projects/instantetrips-editor/databases/(default)/documents/settings/general';
+                
+                const response = await fetch(URL);
+                const data = await response.json();
+                
+                // Parse Firestore REST structure
+                const maintenanceMode = data.fields?.maintenance_mode?.mapValue?.fields?.[COUNTRY]?.booleanValue;
+                
+                if (maintenanceMode === true) {
+                    // STOP EVERYTHING AND SHOW OVERLAY
+                    document.documentElement.innerHTML = `
+                        <!DOCTYPE html>
+                        <html lang="es">
+                        <head>
+                            <meta charset="UTF-8">
+                            <title>Sitio en Mantenimiento | Instante Trips</title>
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                            <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=IBM+Plex+Serif:wght@400&display=swap" rel="stylesheet">
+                            <style>
+                                body { margin: 0; padding: 0; background: #0f172a; color: white; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: 'IBM Plex Serif', serif; overflow: hidden; }
+                                .container { text-align: center; max-width: 600px; padding: 20px; animation: fadeIn 1s ease-out; }
+                                h1 { font-family: 'Montserrat', sans-serif; font-size: 3rem; margin-bottom: 20px; color: #10b981; text-transform: uppercase; letter-spacing: -2px; }
+                                p { font-size: 1.2rem; line-height: 1.6; color: #94a3b8; margin-bottom: 40px; }
+                                .loader { width: 50px; height: 50px; border: 3px solid rgba(16, 185, 129, 0.3); border-radius: 50%; border-top-color: #10b981; animation: spin 1s ease-in-out infinite; margin: 0 auto; }
+                                @keyframes spin { to { transform: rotate(360deg); } }
+                                @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+                            </style>
+                        </head>
+                        <body>
+                            <div class="container">
+                                <div class="loader" style="margin-bottom: 30px;"></div>
+                                <h1>En Construcción</h1>
+                                <p>Estamos preparando las mejores experiencias de México para ti.<br>Volveremos muy pronto.</p>
+                                <p style="font-size: 0.9rem; opacity: 0.5;">&copy; 2026 Instante Trips</p>
+                            </div>
+                        </body>
+                        </html>
+                    `;
+                    // Stop further execution
+                    throw new Error("Maintenance Mode Active");
+                }
+            } catch (e) {
+                if (e.message !== "Maintenance Mode Active") console.log('Guardian Check Passed');
+            }
+        })();
+    </script>
     <body>
         <slot />
 
